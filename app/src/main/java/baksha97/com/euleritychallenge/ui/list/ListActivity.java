@@ -21,7 +21,7 @@ import baksha97.com.euleritychallenge.data.model.ImageItem;
 import baksha97.com.euleritychallenge.data.network.VolleySingleton;
 import baksha97.com.euleritychallenge.utility.Constants;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements ImageItemAdapter.onItemClickListener {
     private static final String LOG_TAG = ListActivity.class.getSimpleName();
 
     private RecyclerView recyclerView;
@@ -67,8 +67,10 @@ public class ListActivity extends AppCompatActivity {
                     list.add(newItem);
                 }
 
-                adapter = new ListImageItemAdapter(list, ListActivity.this);
+                adapter = new ImageItemAdapter(list, ListActivity.this);
+                
                 recyclerView.setAdapter(adapter);
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -76,5 +78,10 @@ public class ListActivity extends AppCompatActivity {
         }, error -> error.printStackTrace());
 
         VolleySingleton.getsInstance(this).addToRequestQueue(request);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
     }
 }

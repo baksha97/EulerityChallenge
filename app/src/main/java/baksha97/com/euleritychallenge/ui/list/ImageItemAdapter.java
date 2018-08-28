@@ -23,14 +23,19 @@ import baksha97.com.euleritychallenge.data.model.ImageItem;
 /**
  * Adapter class used to generate the RecyclerView with items.
  */
-public class ListImageItemAdapter extends RecyclerView.Adapter<ListImageItemAdapter.ViewHolder> {
+public class ImageItemAdapter extends RecyclerView.Adapter<ImageItemAdapter.ViewHolder> {
 
     private List<ImageItem> list;
     private Context context;
+    private onItemClickListener mListener;
 
-    public ListImageItemAdapter(List<ImageItem> list, Context context) {
+    public ImageItemAdapter(List<ImageItem> list, Context context) {
         this.list = list;
         this.context = context;
+    }
+
+    public void setOnItemClickListener(onItemClickListener listener) {
+        mListener = listener;
     }
 
     @NonNull
@@ -53,13 +58,17 @@ public class ListImageItemAdapter extends RecyclerView.Adapter<ListImageItemAdap
                         .centerInside()
                         .diskCacheStrategy(DiskCacheStrategy.ALL))
                 .into(viewHolder.mImageView);
-        viewHolder.mTextViewCreated.setText("Created @ "+item.getCreated());
-        viewHolder.mTextViewUpdated.setText("Updated @ "+item.getUpdated());
+        viewHolder.mTextViewCreated.setText("Created @ " + item.getCreated());
+        viewHolder.mTextViewUpdated.setText("Updated @ " + item.getUpdated());
     }
 
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public interface onItemClickListener {
+        void onItemClick(int position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -73,6 +82,16 @@ public class ListImageItemAdapter extends RecyclerView.Adapter<ListImageItemAdap
             mImageView = (ImageView) itemView.findViewById(R.id.image_view);
             mTextViewCreated = (TextView) itemView.findViewById(R.id.text_created);
             mTextViewUpdated = (TextView) itemView.findViewById(R.id.text_updated);
+
+            itemView.setOnClickListener(v -> {
+                if (mListener != null) {
+                    int pos = getAdapterPosition();
+
+                    if (pos != RecyclerView.NO_POSITION) {
+                        mListener.onItemClick(pos);
+                    }
+                }
+            });
         }
     }
 }

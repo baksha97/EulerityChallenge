@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 
 import baksha97.com.euleritychallenge.R;
+import ja.burhanrashid52.photoeditor.PhotoEditor;
+import ja.burhanrashid52.photoeditor.PhotoEditorView;
 
 public class EditImageActivity extends AppCompatActivity {
 
@@ -26,7 +28,7 @@ public class EditImageActivity extends AppCompatActivity {
 
         mPhotoEditor.addText("hel9333333lo", 1);
 
-        mRvTools = findViewById(R.id.rvConstraintTools);
+        //  mRvTools = findViewById(R.id.rvConstraintTools);
     }
 }
 
