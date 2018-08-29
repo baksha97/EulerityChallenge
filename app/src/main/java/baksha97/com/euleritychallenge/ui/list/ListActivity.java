@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -24,6 +25,7 @@ import baksha97.com.euleritychallenge.ui.edit.EditImageActivity;
 import baksha97.com.euleritychallenge.utility.Constants;
 
 public class ListActivity extends AppCompatActivity implements ImageItemAdapter.onItemClickListener {
+    //Used to pass along through intent
     public static final String EXTRA_IMAGE_CHOSEN = "image_url";
     private static final String LOG_TAG = ListActivity.class.getSimpleName();
     private RecyclerView recyclerView;
@@ -43,7 +45,7 @@ public class ListActivity extends AppCompatActivity implements ImageItemAdapter.
     }
 
     private void setupRecyclerView() {
-
+        Log.d(LOG_TAG, "Setting up recycler view");
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -54,6 +56,7 @@ public class ListActivity extends AppCompatActivity implements ImageItemAdapter.
 
     //TODO: Create an AsyncTask for this handle
     private void retrieveDataFromGet() {
+        Log.d(LOG_TAG, "Performing network request for items");
         String url = Constants.NetworkConstants.IMAGE_GET_REQUEST_URL;
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, response -> {
@@ -88,6 +91,7 @@ public class ListActivity extends AppCompatActivity implements ImageItemAdapter.
         Intent editIntent = new Intent(this, EditImageActivity.class);
         ImageItem clickedItem = list.get(position);
         String url = clickedItem.getUrl();
+        //save original url location
         editIntent.putExtra(EXTRA_IMAGE_CHOSEN, url);
         startActivity(editIntent);
     }

@@ -39,6 +39,9 @@ import ja.burhanrashid52.photoeditor.ViewType;
 import static baksha97.com.euleritychallenge.ui.list.ListActivity.EXTRA_IMAGE_CHOSEN;
 import static baksha97.com.euleritychallenge.utility.Constants.Codes.READ_WRITE_STORAGE_PERMISSION_CODE;
 
+/*
+    Library used to edit the photos is located here: https://github.com/burhanrashid52/PhotoEditor
+ */
 public class EditImageActivity extends AppCompatActivity implements OnPhotoEditorListener,
         View.OnClickListener, EditingToolsAdapter.OnItemSelected {
 
@@ -56,8 +59,10 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
         setContentView(R.layout.activity_edit_image);
         initViews();
 
-        LinearLayoutManager llmTools = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        //Optional LayoutManager that can be used to reorganize the recycled views.
+        //LinearLayoutManager llmTools = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         //mRvTools.setLayoutManager(llmTools);
+
         mRvTools.setAdapter(mEditingToolsAdapter);
 
         mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)
@@ -78,7 +83,6 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
     private void initViews() {
         ImageView imgUndo;
         ImageView imgRedo;
-        FloatingActionButton uploadFab;
 
         mPhotoEditorView = findViewById(R.id.photoEditorView);
         mRvTools = findViewById(R.id.rvConstraintTools);
@@ -166,6 +170,7 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
     }
 
 
+    //TODO: Add into AsyncTask
     @SuppressLint("MissingPermission")
     private void saveImageToFile(ImageUploader.OnImageSaveComplete action) {
         if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -187,24 +192,7 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
 
     private void uploadLatestImage() {
         ImageUploader.getInstance().uploadLatestSavedImage(this, ORIGINAL_IMAGE_URL);
-
     }
-
-
-//    private void showCompletionDialog() {
-//        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-//            switch (which) {
-//                case DialogInterface.BUTTON_POSITIVE:
-//                    uploadLatestImage();
-//                    break;
-//                case DialogInterface.BUTTON_NEGATIVE:
-//                    break;
-//            }
-//        };
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setMessage("Are you sure you are ready to upload??").setPositiveButton("Yes", dialogClickListener)
-//                .setNegativeButton("No", dialogClickListener).show();
-//    }
 
 
     private void askForText() {

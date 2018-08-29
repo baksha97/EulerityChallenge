@@ -2,6 +2,9 @@ package baksha97.com.euleritychallenge.data.model;
 
 import com.google.gson.Gson;
 
+/*
+    Generic custom class to format each item in the initial JSON array item request.
+ */
 public class ImageItem {
     private String updated;
 

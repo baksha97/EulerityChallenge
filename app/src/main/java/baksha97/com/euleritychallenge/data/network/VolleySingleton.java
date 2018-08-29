@@ -15,6 +15,11 @@ public class VolleySingleton {
     private static VolleySingleton sInstance;
     private RequestQueue requestQueue;
 
+    /**
+     * This constructor initializes a new RequestQueue.
+     *
+     * @param context to retrieve the application context.
+     */
     private VolleySingleton(Context context) {
         requestQueue = Volley.newRequestQueue(context.getApplicationContext());
     }
@@ -25,6 +30,7 @@ public class VolleySingleton {
         return sInstance;
     }
 
+    //Parameter type T for a variety of Request type classes.
     public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }

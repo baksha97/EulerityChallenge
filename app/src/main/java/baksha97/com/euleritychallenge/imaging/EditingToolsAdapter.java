@@ -13,6 +13,11 @@ import java.util.List;
 
 import baksha97.com.euleritychallenge.R;
 
+/*
+ * This class is used to bind the editing tool xml file to each type of object and tool type.
+ * This has been made dynamically to allow more tool types and photo options in the future
+ */
+
 public class EditingToolsAdapter extends RecyclerView.Adapter<EditingToolsAdapter.ViewHolder> {
 
     private List<ToolModel> mToolList = new ArrayList<>();

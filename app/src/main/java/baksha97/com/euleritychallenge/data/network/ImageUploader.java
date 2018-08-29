@@ -17,11 +17,20 @@ import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.SaveSettings;
 
 
+/*
+    We will try to clean up the EditImageActivity with this Singleton
+    This Singleton will contain the code for uploading the latest image that was saved in our Activity.
+    The latest image is always stored in one location as denoted by the {@link Constants.java}
+ */
+
 public class ImageUploader {
     private static final String LOG_TAG = ImageUploader.class.getSimpleName();
 
     private static final ImageUploader sInstance = new ImageUploader();
 
+    /**
+     * This constructor privately initializes for a single instance.
+     */
     private ImageUploader() {
     }
 
@@ -29,6 +38,7 @@ public class ImageUploader {
         return sInstance;
     }
 
+    //Simply retrieve an available upload URL
     private void getUploadUrl(Context context, OnUrlResponse aResponse) {
         String getRequestUrl = Constants.NetworkConstants.UPLOAD_IMAGE_GET_REQUEST_URL;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getRequestUrl, null, response -> {
@@ -43,15 +53,18 @@ public class ImageUploader {
         VolleySingleton.getsInstance(context).addToRequestQueue(request);
     }
 
+
+    //We can supress this warning because the Activity will ask for permission prior to this call.
     @SuppressLint("MissingPermission")
     public void uploadLatestSavedImage(Context context, String originalImageUrl) {
 
         String appId = Constants.NetworkConstants.APP_ID;
 
-        //TODO: Implement Async Tasks
+        //TODO: Implement Async Tasks to improve reliability and adhere to Android coding conventions.
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        //Attempt to run upload off of the main thread
         Thread thread = new Thread(() -> {
             String filePath = Constants.PathConstants.getDesignatedEditedFilePath(context);
             String charset = Constants.NetworkConstants.CHARSET;
@@ -63,6 +76,7 @@ public class ImageUploader {
             ImageUploader.this.getUploadUrl(context, requestUrl -> {
 
                 try {
+                    //Utility class posted online
                     MultipartUtility multipart = new MultipartUtility(requestUrl, charset);
                     File file = new File(filePath);
                     file.createNewFile();
@@ -88,6 +102,10 @@ public class ImageUploader {
         thread.start();
     }
 
+    /**
+     * Below are a set of interfaces that will be used for adding runnable method on completion of a task.
+     * It may be best suited to use a higher level library such as RxJava to more appropriately access API endpoints.
+     */
     interface OnUrlResponse {
         void onResponse(String requestUrl);
     }

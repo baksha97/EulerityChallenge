@@ -84,7 +84,7 @@ public class ImageItemAdapter extends RecyclerView.Adapter<ImageItemAdapter.View
             itemView.setOnClickListener(v -> {
                 if (mListener != null) {
                     int pos = getAdapterPosition();
-
+                    //Ensure it is a valid position touched.
                     if (pos != RecyclerView.NO_POSITION) {
                         mListener.onItemClick(pos);
                     }
