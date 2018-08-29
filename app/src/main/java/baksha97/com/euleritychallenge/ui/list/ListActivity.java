@@ -52,6 +52,7 @@ public class ListActivity extends AppCompatActivity implements ImageItemAdapter.
 
     }
 
+    //TODO: Create an AsyncTask for this handle
     private void retrieveDataFromGet() {
         String url = Constants.NetworkConstants.IMAGE_GET_REQUEST_URL;
 

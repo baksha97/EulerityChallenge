@@ -1,11 +1,17 @@
 package baksha97.com.euleritychallenge.ui.edit;
 
-import android.content.Context;
-import android.content.DialogInterface;
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,29 +20,29 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
 import baksha97.com.euleritychallenge.R;
+import baksha97.com.euleritychallenge.data.network.ImageUploader;
 import baksha97.com.euleritychallenge.imaging.EditingToolsAdapter;
 import baksha97.com.euleritychallenge.imaging.FilterCycler;
 import baksha97.com.euleritychallenge.imaging.ToolType;
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
-import ja.burhanrashid52.photoeditor.OnSaveBitmap;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
-import ja.burhanrashid52.photoeditor.SaveSettings;
 import ja.burhanrashid52.photoeditor.ViewType;
 
 import static baksha97.com.euleritychallenge.ui.list.ListActivity.EXTRA_IMAGE_CHOSEN;
+import static baksha97.com.euleritychallenge.utility.Constants.Codes.READ_WRITE_STORAGE_PERMISSION_CODE;
 
 public class EditImageActivity extends AppCompatActivity implements OnPhotoEditorListener,
         View.OnClickListener, EditingToolsAdapter.OnItemSelected {
 
     private static final String LOG_TAG = EditImageActivity.class.getSimpleName();
+    private static String ORIGINAL_IMAGE_URL;
     private PhotoEditor mPhotoEditor;
     private PhotoEditorView mPhotoEditorView;
     private RecyclerView mRvTools;
@@ -60,11 +66,13 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
 
         Intent intent = getIntent();
         String url = intent.getStringExtra(EXTRA_IMAGE_CHOSEN);
+        ORIGINAL_IMAGE_URL = url;
         Glide.with(this).load(url)
                 .apply(new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL))
                 .into(mPhotoEditorView.getSource());
     }
+
 
     private void initViews() {
         ImageView imgUndo;
@@ -94,49 +102,10 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
                 mPhotoEditor.redo();
                 break;
             case R.id.uploadFab:
-                showCompletionDialog();
+                uploadImage();
                 break;
         }
     }
-
-    private void showCompletionDialog() {
-        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-
-                    displayImage();
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    break;
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you are ready to upload??").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
-    }
-
-    private void displayImage() {
-
-        SaveSettings saveSettings = new SaveSettings.Builder()
-                .setClearViewsEnabled(true)
-                .setTransparencyEnabled(true)
-                .build();
-
-        mPhotoEditor.saveAsBitmap(new OnSaveBitmap() {
-            @Override
-            public void onBitmapReady(Bitmap saveBitmap) {
-                mPhotoEditorView.getSource().setImageBitmap(saveBitmap);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(getApplicationContext(), "An error has occured", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
-        });
-    }
-
 
     @Override
     public void onToolSelected(ToolType toolType) {
@@ -159,6 +128,26 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
                 break;
         }
     }
+
+    public boolean requestPermission(String permission) {
+
+
+        boolean isGranted = ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+        if (!isGranted) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{permission},
+                    READ_WRITE_STORAGE_PERMISSION_CODE);
+        }
+        return isGranted;
+    }
+
+    private void uploadImage() {
+        if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ImageUploader.getInstance().uploadSelectedImage(this, mPhotoEditor, ORIGINAL_IMAGE_URL);
+        }
+    }
+
 
     private void askForText() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
