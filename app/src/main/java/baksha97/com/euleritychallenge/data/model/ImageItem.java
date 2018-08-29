@@ -27,9 +27,10 @@ public class ImageItem {
         return url;
     }
 
-    public String toJson(){
+    public String toJson() {
         return new Gson().toJson(this);
     }
+
     @Override
     public String toString() {
         return "Image Item - [updated = " + updated + ", created = " + created + ", url = " + url + "]";

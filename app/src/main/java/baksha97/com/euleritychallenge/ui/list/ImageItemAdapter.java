@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
@@ -55,8 +54,7 @@ public class ImageItemAdapter extends RecyclerView.Adapter<ImageItemAdapter.View
 
         Glide.with(context).load(imageUrl)
                 .apply(new RequestOptions()
-                        .centerInside()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL))
+                        .centerInside())
                 .into(viewHolder.mImageView);
         viewHolder.mTextViewCreated.setText("Created @ " + item.getCreated());
         viewHolder.mTextViewUpdated.setText("Updated @ " + item.getUpdated());

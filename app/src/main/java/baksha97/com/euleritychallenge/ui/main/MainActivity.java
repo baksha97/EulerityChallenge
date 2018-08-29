@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import baksha97.com.euleritychallenge.R;
-import baksha97.com.euleritychallenge.ui.edit.EditImageActivity;
 import baksha97.com.euleritychallenge.ui.list.ListActivity;
 
 public class MainActivity extends AppCompatActivity {

@@ -1,7 +1,6 @@
 package baksha97.com.euleritychallenge.ui.list;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,10 +24,8 @@ import baksha97.com.euleritychallenge.ui.edit.EditImageActivity;
 import baksha97.com.euleritychallenge.utility.Constants;
 
 public class ListActivity extends AppCompatActivity implements ImageItemAdapter.onItemClickListener {
+    public static final String EXTRA_IMAGE_CHOSEN = "image_url";
     private static final String LOG_TAG = ListActivity.class.getSimpleName();
-
-    public static final String EXTRA_IMAGE_CHOSEN_URL_KEY = "image_url";
-
     private RecyclerView recyclerView;
     private ImageItemAdapter adapter;
 
@@ -89,8 +86,8 @@ public class ListActivity extends AppCompatActivity implements ImageItemAdapter.
     public void onItemClick(int position) {
         Intent editIntent = new Intent(this, EditImageActivity.class);
         ImageItem clickedItem = list.get(position);
-        editIntent.putExtra(EXTRA_IMAGE_CHOSEN_URL_KEY, clickedItem.getUrl());
-
+        String url = clickedItem.getUrl();
+        editIntent.putExtra(EXTRA_IMAGE_CHOSEN, url);
         startActivity(editIntent);
     }
 }

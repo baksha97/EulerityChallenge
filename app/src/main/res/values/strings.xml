@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Eulerity Challenge</string>
     <string name="tool_name">tool_name</string>
+    <string name="label_draw">Draw</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="label_filter">Filter</string>
+    <string name="label_eraser">Eraser</string>
+    <string name="label_text">Text</string>
 </resources>

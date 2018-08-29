@@ -1,9 +1,8 @@
 package baksha97.com.euleritychallenge.imaging;
 
 public enum ToolType {
-    BRUSH,
+    DRAW,
     TEXT,
     ERASER,
     FILTER,
 }
-
