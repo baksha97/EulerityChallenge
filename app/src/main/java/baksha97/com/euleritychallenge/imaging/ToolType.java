@@ -5,4 +5,5 @@ public enum ToolType {
     TEXT,
     ERASER,
     FILTER,
+    UPLOAD,
 }

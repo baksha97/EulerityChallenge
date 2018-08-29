@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -30,6 +30,7 @@ import baksha97.com.euleritychallenge.data.network.ImageUploader;
 import baksha97.com.euleritychallenge.imaging.EditingToolsAdapter;
 import baksha97.com.euleritychallenge.imaging.FilterCycler;
 import baksha97.com.euleritychallenge.imaging.ToolType;
+import baksha97.com.euleritychallenge.utility.Constants;
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
@@ -56,7 +57,7 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
         initViews();
 
         LinearLayoutManager llmTools = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mRvTools.setLayoutManager(llmTools);
+        //mRvTools.setLayoutManager(llmTools);
         mRvTools.setAdapter(mEditingToolsAdapter);
 
         mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)
@@ -88,8 +89,6 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
         imgRedo = findViewById(R.id.imgRedo);
         imgRedo.setOnClickListener(this);
 
-        uploadFab = findViewById(R.id.uploadFab);
-        uploadFab.setOnClickListener(this);
     }
 
     @Override
@@ -100,9 +99,6 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
                 break;
             case R.id.imgRedo:
                 mPhotoEditor.redo();
-                break;
-            case R.id.uploadFab:
-                uploadImage();
                 break;
         }
     }
@@ -125,15 +121,18 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
             case FILTER:
                 Log.d(LOG_TAG, "SELECTED: FILTER");
                 mPhotoEditor.setFilterEffect(FilterCycler.getsInstance().nextFilter());
+                Toast.makeText(this, "Filters stack upon load! Stack your edits!", Toast.LENGTH_LONG).show();
                 break;
+            case UPLOAD:
+                Log.d(LOG_TAG, "SELECTED: SAVE");
+                promptWithLatestPhoto();
         }
     }
 
     public boolean requestPermission(String permission) {
-
-
         boolean isGranted = ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
         if (!isGranted) {
+            Log.d(LOG_TAG, "Asking permission for Read Write");
             ActivityCompat.requestPermissions(
                     this,
                     new String[]{permission},
@@ -142,11 +141,70 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
         return isGranted;
     }
 
-    private void uploadImage() {
+
+    private synchronized void promptWithLatestPhoto() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Your image so far:");
+        alert.setMessage("Are you sure you'd like to upload this image?...");
+        // Set an EditText view to get user input
+        final ImageView imageView = new ImageView(this);
+        alert.setView(imageView);
+
+        alert.setPositiveButton("Go", (dialog, whichButton) -> {
+            Log.d(LOG_TAG, "Latest image selected for upload: ");
+            uploadLatestImage();
+            return;
+        });
+
+        //When file is saved to system, it will then show alert
+        saveImageToFile(() -> {
+            //Put image into view upon saving ...
+            Bitmap fileImageBit = BitmapFactory.decodeFile(Constants.PathConstants.getDesignatedEditedFilePath(this));
+            imageView.setImageBitmap(fileImageBit);
+            alert.show();
+        });
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private void saveImageToFile(ImageUploader.OnImageSaveComplete action) {
         if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            ImageUploader.getInstance().uploadSelectedImage(this, mPhotoEditor, ORIGINAL_IMAGE_URL);
+            String filePath = Constants.PathConstants.getDesignatedEditedFilePath(this);
+
+            mPhotoEditor.saveAsFile(filePath, new PhotoEditor.OnSaveListener() {
+                @Override
+                public void onSuccess(@NonNull String imagePath) {
+                    action.onSave();
+                }
+
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.e(LOG_TAG, "save file error");
+                }
+            });
         }
     }
+
+    private void uploadLatestImage() {
+        ImageUploader.getInstance().uploadLatestSavedImage(this, ORIGINAL_IMAGE_URL);
+
+    }
+
+
+//    private void showCompletionDialog() {
+//        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+//            switch (which) {
+//                case DialogInterface.BUTTON_POSITIVE:
+//                    uploadLatestImage();
+//                    break;
+//                case DialogInterface.BUTTON_NEGATIVE:
+//                    break;
+//            }
+//        };
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setMessage("Are you sure you are ready to upload??").setPositiveButton("Yes", dialogClickListener)
+//                .setNegativeButton("No", dialogClickListener).show();
+//    }
 
 
     private void askForText() {

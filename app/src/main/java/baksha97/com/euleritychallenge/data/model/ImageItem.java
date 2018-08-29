@@ -33,7 +33,7 @@ public class ImageItem {
 
     @Override
     public String toString() {
-        return "Image Item - [updated = " + updated + ", created = " + created + ", url = " + url + "]";
+        return "ImageItem.class - [updated = " + updated + ", created = " + created + ", url = " + url + "]";
     }
 }
 

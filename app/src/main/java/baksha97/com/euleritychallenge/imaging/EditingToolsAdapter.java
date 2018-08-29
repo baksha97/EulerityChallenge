@@ -21,10 +21,11 @@ public class EditingToolsAdapter extends RecyclerView.Adapter<EditingToolsAdapte
     public EditingToolsAdapter(OnItemSelected onItemSelected) {
         mOnItemSelected = onItemSelected;
         //TODO: Change icons
-        mToolList.add(new ToolModel("Draw", R.drawable.ic_launcher_background, ToolType.DRAW));
-        mToolList.add(new ToolModel("Eraser", R.drawable.ic_launcher_background, ToolType.ERASER));
-        mToolList.add(new ToolModel("Text", R.drawable.ic_launcher_background, ToolType.TEXT));
-        mToolList.add(new ToolModel("Filter", R.drawable.ic_launcher_background, ToolType.FILTER));
+        mToolList.add(new ToolModel("Draw", R.drawable.ic_brush, ToolType.DRAW));
+        mToolList.add(new ToolModel("Eraser", R.drawable.ic_eraser, ToolType.ERASER));
+        mToolList.add(new ToolModel("Text", R.drawable.ic_text, ToolType.TEXT));
+        mToolList.add(new ToolModel("Filter", R.drawable.ic_photo_filter, ToolType.FILTER));
+        mToolList.add(new ToolModel("Upload", R.drawable.ic_download, ToolType.UPLOAD));
     }
 
     @NonNull

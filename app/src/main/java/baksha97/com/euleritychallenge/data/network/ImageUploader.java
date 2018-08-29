@@ -3,8 +3,6 @@ package baksha97.com.euleritychallenge.data.network;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.StrictMode;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -17,6 +15,7 @@ import java.util.List;
 import baksha97.com.euleritychallenge.utility.Constants;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.SaveSettings;
+
 
 public class ImageUploader {
     private static final String LOG_TAG = ImageUploader.class.getSimpleName();
@@ -45,9 +44,10 @@ public class ImageUploader {
     }
 
     @SuppressLint("MissingPermission")
-    public void uploadSelectedImage(Context context, PhotoEditor photoEditor, String originalImageUrl) {
+    public void uploadLatestSavedImage(Context context, String originalImageUrl) {
 
         String appId = Constants.NetworkConstants.APP_ID;
+
         //TODO: Implement Async Tasks
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -60,51 +60,42 @@ public class ImageUploader {
                     .setTransparencyEnabled(true)
                     .build();
 
-            getUploadUrl(context, requestUrl -> {
+            ImageUploader.this.getUploadUrl(context, requestUrl -> {
+
                 try {
-                    photoEditor.saveAsFile(filePath, saveSettings, new PhotoEditor.OnSaveListener() {
-                        @Override
-                        public void onSuccess(@NonNull String imagePath) {
-                            System.out.println(imagePath);
+                    MultipartUtility multipart = new MultipartUtility(requestUrl, charset);
+                    File file = new File(filePath);
+                    file.createNewFile();
 
-                            try {
-                                MultipartUtility multipart = new MultipartUtility(requestUrl, charset);
-                                File file = new File(imagePath);
-                                file.createNewFile();
+                    multipart.addFormField("appid", appId);
+                    multipart.addFormField("original", originalImageUrl);
+                    multipart.addFilePart("file", file);
 
-                                multipart.addFormField("appid", appId);
-                                multipart.addFormField("original", originalImageUrl);
-                                multipart.addFilePart("file", file);
+                    List<String> response = multipart.finish();
 
-                                List<String> response = multipart.finish();
+                    System.out.println("SERVER REPLIED:");
 
-                                System.out.println("SERVER REPLIED:");
-
-                                for (String line : response) {
-                                    System.out.println(line);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Log.e(LOG_TAG, "save file error");
-                        }
-                    });
+                    for (String line : response) {
+                        System.out.println(line);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
+
         });
+
         thread.start();
     }
 
-
-    public interface OnUrlResponse {
+    interface OnUrlResponse {
         void onResponse(String requestUrl);
     }
 
 
+    public interface OnImageSaveComplete {
+        void onSave();
+    }
+
 }
+
