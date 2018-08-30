@@ -162,13 +162,14 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
         return alert;
     }
 
-    //TODO: FIX - Quickly tapping for prompt will cause multiple popups to occur.
     private synchronized void promptWithLatestPhoto() {
+        //shortly close edit bar while prompt is loaded
+        mRvTools.setAdapter(null);
         saveImageToFile(() -> {
             //Put image into view upon saving ...
             Bitmap fileImageBit = BitmapFactory.decodeFile(Constants.PathConstants.getDesignatedEditedFilePath(this));
             photoAlert(fileImageBit).show();
-
+            mRvTools.setAdapter(mEditingToolsAdapter);
         });
     }
 
