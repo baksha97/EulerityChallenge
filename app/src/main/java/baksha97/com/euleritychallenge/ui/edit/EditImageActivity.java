@@ -145,27 +145,30 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
         return isGranted;
     }
 
-
-    private synchronized void promptWithLatestPhoto() {
+    private AlertDialog.Builder photoAlert(Bitmap fileImageBit) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Your image so far:");
         alert.setMessage("Are you sure you'd like to upload this image?...");
         // Set an EditText view to get user input
         final ImageView imageView = new ImageView(this);
         alert.setView(imageView);
-
+        imageView.setImageBitmap(fileImageBit);
         alert.setPositiveButton("Go", (dialog, whichButton) -> {
             Log.d(LOG_TAG, "Latest image selected for upload: ");
             uploadLatestImage();
             return;
         });
 
-        //When file is saved to system, it will then show alert
+        return alert;
+    }
+
+    //TODO: FIX - Quickly tapping for prompt will cause multiple popups to occur.
+    private synchronized void promptWithLatestPhoto() {
         saveImageToFile(() -> {
             //Put image into view upon saving ...
             Bitmap fileImageBit = BitmapFactory.decodeFile(Constants.PathConstants.getDesignatedEditedFilePath(this));
-            imageView.setImageBitmap(fileImageBit);
-            alert.show();
+            photoAlert(fileImageBit).show();
+
         });
     }
 
@@ -257,6 +260,7 @@ public class EditImageActivity extends AppCompatActivity implements OnPhotoEdito
     public void onStopViewChangeListener(ViewType viewType) {
         Log.d(LOG_TAG, "onStopViewChangeListener() called with: viewType = [" + viewType + "]");
     }
+
 
 }
 

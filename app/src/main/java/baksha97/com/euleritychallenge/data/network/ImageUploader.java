@@ -2,6 +2,7 @@ package baksha97.com.euleritychallenge.data.network;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 
 import com.android.volley.Request;
@@ -38,6 +39,7 @@ public class ImageUploader {
         return sInstance;
     }
 
+
     //Simply retrieve an available upload URL
     private void getUploadUrl(Context context, OnUrlResponse aResponse) {
         String getRequestUrl = Constants.NetworkConstants.UPLOAD_IMAGE_GET_REQUEST_URL;
@@ -60,7 +62,7 @@ public class ImageUploader {
 
         String appId = Constants.NetworkConstants.APP_ID;
 
-        //TODO: Implement Async Tasks to improve reliability and adhere to Android coding conventions.
+        //TODO: Implement Async/Rx Tasks to improve reliability and adhere to Android coding conventions.
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -106,7 +108,7 @@ public class ImageUploader {
      * Below are a set of interfaces that will be used for adding runnable method on completion of a task.
      * It may be best suited to use a higher level library such as RxJava to more appropriately access API endpoints.
      */
-    interface OnUrlResponse {
+    public interface OnUrlResponse {
         void onResponse(String requestUrl);
     }
 
