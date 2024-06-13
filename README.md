@@ -1,3 +1,7 @@
+# UPDATE:
+
+I went in to this interview 6 years ago after completing this assignment. They proceeded to tell me the internship was unpaid and made me whiteboard the[ Trapping Rainwater](https://leetcode.com/problems/trapping-rain-water/) problem. In hindsight, this was pretty despicable to ask a junior in college to solve a Leetcode hard for an unpaid internship. I do not recommend this company based in NYC to anyone who stumbles upon this repository. 
+
 # EulerityChallenge
 Here's a list project tasks.
 
